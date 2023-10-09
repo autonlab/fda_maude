@@ -7,7 +7,7 @@
 # HOW TO RUN
 # 1. Set a working directory where you want the data to be stored
 #    Without removing intermediate files, this will take ~80Gb of disk space
-MAXLINES=1000000 #joined MAUDE database split into files with MAXLINES lines
+MAXLINES=10000 #joined MAUDE database split into files with MAXLINES lines
 WDIR='/local_data/maude/'
 if [ ! -d ${WDIR} ]; then
 	mkdir ${WDIR}
@@ -37,7 +37,7 @@ mdrfoi=(thru2022 add change "")
 # Function definitions to keep the script readable
 function download () { wget -q --show-progress -P ${WDIR} ${URL}$1;}
 function decompress () { 
-	unzip -q -L ${WDIR}$1 -d ${WDIR}
+	unzip -n -q -L ${WDIR}$1 -d ${WDIR}
 	rm ${WDIR}$1
 }
 function to_utf8 () {
@@ -147,10 +147,11 @@ for repeated_column_name in DATE_RECEIVED DATE_REPORT PATIENT_SEQUENCE_NUMBER; d
 	#https://unix.stackexchange.com/questions/402286/how-to-make-incremental-replace-in-files-with-bash
 	perl -i -pe "s/$repeated_column_name\K/sprintf \"_%d\",++\$i/ge" columns
 done
-split -l ${MAXLINES} -d ${WDIR}MAUDE ${WDIR}MAUDE_S
+split -l ${MAXLINES} -a 3 -d ${WDIR}MAUDE ${WDIR}MAUDE_S
 for filename in ${WDIR}MAUDE_S*; do
 	echo ${filename}
-	cat columns ${filename} > ${TMP}
+	#drop quotations which confuse newlines and drop rows with too many/few rows
+	cat columns ${filename} | sed -e "s/\"//g" | awk -F\| "NF==126" | cat >${TMP}
 	cp ${TMP} ${filename}
 done
-rm ${TMP} ${TMP2}
+rm ${TMP} ${TMP2} columns
