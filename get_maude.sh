@@ -7,7 +7,7 @@
 # HOW TO RUN
 # 1. Set a working directory where you want the data to be stored
 #    Without removing intermediate files, this will take ~80Gb of disk space
-MAXLINES=10000 #joined MAUDE database split into files with MAXLINES lines
+MAXLINES=200000 #joined MAUDE database split into files with MAXLINES lines
 WDIR='/local_data/maude/'
 if [ ! -d ${WDIR} ]; then
 	mkdir ${WDIR}
@@ -154,4 +154,4 @@ for filename in ${WDIR}MAUDE_S*; do
 	cat columns ${filename} | sed -e "s/\"//g" | awk -F\| "NF==126" | cat >${TMP}
 	cp ${TMP} ${filename}
 done
-rm ${TMP} ${TMP2} columns
+rm ${TMP} ${TMP2} columns body
