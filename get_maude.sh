@@ -119,7 +119,7 @@ cat ${WDIR}mdrfoithru2022.txt > ${WDIR}mdr
 cat ${WDIR}device2013.txt > ${WDIR}device
 cat ${WDIR}foitext2013.txt > ${WDIR}text
 #Online database only has back to 2013, so mirroring here
-for year in {2013..2022}; do 
+for year in {2014..2022}; do  # 2013 data is already in ${WDIR}device
 	tail -n +2 ${WDIR}device${year}.txt | cat >> ${WDIR}device
 	tail -n +2 ${WDIR}foitext${year}.txt | cat >> ${WDIR}text
 done
